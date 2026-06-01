@@ -23,18 +23,16 @@ def midi_to_note(midi: int) -> tuple[str, int]:
     return note, octave
 
 
-def make_data(tuning_rev: list[int], fret_range: tuple[int, int]) -> np.ndarray:
-    fret_start, fret_end = fret_range
-
-    data = np.ndarray((len(tuning_rev), fret_end - fret_start), dtype=object)
+def make_data(tuning_rev: list[int], fret_range_stop: int) -> np.ndarray:
+    data = np.ndarray((len(tuning_rev), fret_range_stop), dtype=object)
 
     for i in range(len(tuning_rev)):
         root_midi = tuning_rev[i]
 
-        for j in range(fret_start, fret_end):
+        for j in range(fret_range_stop):
             note_midi = root_midi + j
             note_name, note_octave = midi_to_note(note_midi)
-            data[i, j - fret_start] = f"{note_name}{note_octave} ({note_midi})"
+            data[i, j] = f"{note_name}{note_octave} ({note_midi})"
 
     return data
 
@@ -59,12 +57,12 @@ def make_df(
     scale: Iterable[int],
     *,
     tuning: list[int],
-    fret_range: tuple[int, int],
+    fret_range_stop: int,
     highlight_range: tuple[int, int],
 ):
     scale_str = [CHROMATIC_NOTES[x] for x in scale]
     tuning_rev = list(reversed(tuning))
-    data = make_data(tuning_rev, fret_range)
+    data = make_data(tuning_rev, fret_range_stop)
 
     df = pd.DataFrame(data=data)
 
@@ -93,10 +91,10 @@ with col1:
     tuning = st.text_input("Enter tuning (midi number)", value="40, 45, 50, 55, 59, 64")
     tuning = [int(x) for x in tuning.split(",")]
 
-    fret_range_raw = st.slider(
-        "Fret range:", min_value=0, max_value=24, value=(0, 15), step=1
+    fret_range_stop_raw = st.slider(
+        "Fret range (stop):", min_value=0, max_value=24, value=15, step=1
     )
-    fret_range = fret_range_raw[0], fret_range_raw[1] + 1  # make it inclusive
+    fret_range_stop = fret_range_stop_raw + 1  # make it inclusive
 
     highlight_range_raw = st.slider(
         "Highlight range:", min_value=0, max_value=24, value=(0, 24), step=1
@@ -133,7 +131,7 @@ with col2:
         df = make_df(
             scale,
             tuning=tuning,
-            fret_range=fret_range,
+            fret_range_stop=fret_range_stop,
             highlight_range=highlight_range,
         )
         st.dataframe(df)
