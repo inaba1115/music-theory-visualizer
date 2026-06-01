@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Music theory visualizer"
 readme = "README.md"
 authors = [{name = "inaba1115", email = "inaba1115@gmail.com"}]
-requires-python = ">=3.13"
+requires-python = ">=3.12"
 dependencies = [
     "hyperscore>=0.2.0",
     "matplotlib>=3.10.9",
