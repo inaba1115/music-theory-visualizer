@@ -1,21 +1,18 @@
 # ---------------------------------------------------------------------
-# Configuration
-# ---------------------------------------------------------------------
-
-UV_RUN := uv run
-
-# ---------------------------------------------------------------------
 # Dev Targets
 # ---------------------------------------------------------------------
 
-.PHONY: all lint
+.PHONY: all lint export_requirements
 
-all: lint
+all: lint export_requirements
 
 lint:
-	$(UV_RUN) ruff check . --fix
-	$(UV_RUN) ruff format .
-	$(UV_RUN) ty check .
+	uv run ruff check . --fix
+	uv run ruff format .
+	uv run ty check .
+
+export_requirements:
+	uv export --format requirements-txt --no-hashes > requirements.txt
 
 # ---------------------------------------------------------------------
 # App Targets
@@ -25,4 +22,4 @@ lint:
 
 # Usage: make streamlit APP={STREAMLIT_SCRIPT.py}
 streamlit:
-	$(UV_RUN) streamlit run ${APP}
+	uv run streamlit run ${APP}
