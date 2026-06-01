@@ -2,37 +2,27 @@
 # Configuration
 # ---------------------------------------------------------------------
 
-PIXI_RUN := uv run
+UV_RUN := uv run
 
 # ---------------------------------------------------------------------
 # Dev Targets
 # ---------------------------------------------------------------------
 
-.PHONY: all lint test
+.PHONY: all lint
 
-all: lint test
+all: lint
 
 lint:
-	$(PIXI_RUN) ruff check . --fix
-	$(PIXI_RUN) ruff format .
-	$(PIXI_RUN) ty check .
-
-test:
-	$(PIXI_RUN) pytest tests
+	$(UV_RUN) ruff check . --fix
+	$(UV_RUN) ruff format .
+	$(UV_RUN) ty check .
 
 # ---------------------------------------------------------------------
-# Notebook Targets
+# App Targets
 # ---------------------------------------------------------------------
 
-.PHONY: jupyter, marimo, streamlit
-
-jupyter:
-	$(PIXI_RUN) jupyter lab
-
-# Usage: make marimo APP={MARIMO_SCRIPT.py}
-marimo:
-	$(PIXI_RUN) marimo edit ${APP}
+.PHONY: streamlit
 
 # Usage: make streamlit APP={STREAMLIT_SCRIPT.py}
 streamlit:
-	$(PIXI_RUN) streamlit run ${APP}
+	$(UV_RUN) streamlit run ${APP}
